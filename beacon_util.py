@@ -38,7 +38,7 @@ def update_df(df, cols):
     df = df.drop_duplicates(subset=['mac_add'])
     return df
 
-async def discover():
+async def discover(verbose=True , watch_time=2):
 
     devices = []
 
@@ -52,7 +52,9 @@ async def discover():
             beacon_info['minor']   = int.from_bytes(bytearray(data[20:22]), 'big', signed=False)
             beacon_info['button_status'] = 3
 
-            print(f'\t\tDetected {beacon_type}: {beacon_info["mac_add"]}')
+            if verbose:
+                print(f'\t\tDetected {beacon_type}: {beacon_info["mac_add"]}')
+
             return beacon_info
         else:
             return None
@@ -81,7 +83,7 @@ async def discover():
     watcher.add_received(on_advert)
 
     watcher.start()
-    await asyncio.sleep(2)
+    await asyncio.sleep(watch_time)
     watcher.stop()
 
     return devices
